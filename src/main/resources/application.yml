@@ -1,0 +1,18 @@
+
+server:
+    port: 8095
+
+spring:
+    application:
+        name: jazzified-genre-service
+    config:
+        import: configserver:http://localhost:8888
+    profiles:
+        active: dev
+#    cloud:
+#        config:
+#            uri: ${CONFIGSERVER_URI}
+
+
+    
+
