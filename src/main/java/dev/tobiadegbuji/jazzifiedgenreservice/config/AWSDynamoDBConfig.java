@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
+import java.util.Collections;
+
+import static dev.tobiadegbuji.jazzifiedgenreservice.utils.Constants.GENRE_TABLE_NAME;
 
 @Configuration
 @Log4j2
@@ -31,19 +34,17 @@ public class AWSDynamoDBConfig{
     ApplicationRunner applicationRunner(DynamoDB dynamoDB) {
         return
             args -> {
-                String tableName = "Genres";
 
-                try {
 
-                    log.info("Attempting to create table: " + tableName);
+                if(dynamoDB.getTable(GENRE_TABLE_NAME).getDescription() == null){
+                    try {
 
+                    log.info("Attempting to create table: " + GENRE_TABLE_NAME);
 
                     Table table = dynamoDB.createTable(
-                            tableName,
-                            Arrays.asList(new KeySchemaElement("genreId", KeyType.HASH), new KeySchemaElement("create-date", KeyType.RANGE)),
-                            Arrays.asList(
-                                    new AttributeDefinition("genreId", ScalarAttributeType.S),
-                                    new AttributeDefinition("create-date", ScalarAttributeType.S)),
+                            GENRE_TABLE_NAME,
+                            Collections.singletonList(new KeySchemaElement("genre-name", KeyType.HASH)),
+                            Collections.singletonList(new AttributeDefinition("genre-name", ScalarAttributeType.S)),
                             new ProvisionedThroughput(10L, 10L));
 
                     table.waitForActive();
@@ -56,6 +57,7 @@ public class AWSDynamoDBConfig{
 
                     e.printStackTrace();
 
+                }
                 }
         };
     }
